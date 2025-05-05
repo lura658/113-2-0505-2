@@ -7,6 +7,7 @@ let hands = [];
 let circleX, circleY, circleSize;
 let previousX = null;
 let previousY = null;
+let trajectory = []; // 儲存手指移動路徑
 
 function preload() {
   // Initialize HandPose model with flipped video input
@@ -39,43 +40,42 @@ function draw() {
   image(video, 0, 0);
 
   // Draw the circle
-  fill(0, 255, 0, 150); // Semi-transparent green
+  fill(0, 255, 0, 150);
   noStroke();
   circle(circleX, circleY, circleSize);
 
-  // Ensure at least one hand is detected
   if (hands.length > 0) {
     for (let hand of hands) {
       if (hand.confidence > 0.1) {
-        // Get the position of the index finger tip (keypoint 8)
         let indexFinger = hand.keypoints[8];
-
-        // Check if the index finger is touching the circle
         let d = dist(indexFinger.x, indexFinger.y, circleX, circleY);
+
         if (d < circleSize / 2) {
-          // Move the circle to follow the index finger
+          // 手指在圓形內 -> 移動圓形並儲存軌跡
           circleX = indexFinger.x;
           circleY = indexFinger.y;
 
-          // Draw the trajectory line
-          stroke(255, 0, 0); // Red color for the line
+          trajectory.push({ x: indexFinger.x, y: indexFinger.y });
+
+          // 畫出軌跡線條
+          stroke(255, 0, 0);
           strokeWeight(2);
-          if (previousX !== null && previousY !== null) {
-            line(previousX, previousY, indexFinger.x, indexFinger.y);
+          noFill();
+          beginShape();
+          for (let pt of trajectory) {
+            vertex(pt.x, pt.y);
           }
-          previousX = indexFinger.x;
-          previousY = indexFinger.y;
+          endShape();
         } else {
-          // Reset previous coordinates when the finger leaves the circle
-          previousX = null;
-          previousY = null;
+          // 離開圓形 -> 清除軌跡
+          trajectory = [];
         }
 
-        // Draw the index finger tip
+        // 畫出手指點
         if (hand.handedness == "Left") {
-          fill(255, 0, 255); // Left hand color
+          fill(255, 0, 255);
         } else {
-          fill(255, 255, 0); // Right hand color
+          fill(255, 255, 0);
         }
         noStroke();
         circle(indexFinger.x, indexFinger.y, 16);
