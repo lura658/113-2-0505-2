@@ -79,21 +79,6 @@ function draw() {
         }
         noStroke();
         circle(indexFinger.x, indexFinger.y, 16);
-
-        // Loop through keypoints and draw circles
-        for (let i = 0; i < hand.keypoints.length; i++) {
-          let keypoint = hand.keypoints[i];
-
-          // Color-code based on left or right hand
-          if (hand.handedness == "Left") {
-            fill(255, 0, 255);
-          } else {
-            fill(255, 255, 0);
-          }
-
-          noStroke();
-          circle(keypoint.x, keypoint.y, 16);
-        }
       }
     }
   }
