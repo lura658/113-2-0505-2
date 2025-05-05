@@ -56,6 +56,19 @@ function draw() {
           // Move the circle to follow the index finger
           circleX = indexFinger.x;
           circleY = indexFinger.y;
+
+          // Draw the trajectory line
+          stroke(255, 0, 0); // Red color for the line
+          strokeWeight(2);
+          if (previousX !== null && previousY !== null) {
+            line(previousX, previousY, indexFinger.x, indexFinger.y);
+          }
+          previousX = indexFinger.x;
+          previousY = indexFinger.y;
+        } else {
+          // Reset previous coordinates when the finger leaves the circle
+          previousX = null;
+          previousY = null;
         }
 
         // Draw the index finger tip
